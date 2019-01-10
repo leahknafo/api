@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="container">
+        <form>
+            <h2>Country Search</h2>
+            <button type="button" id="allbutton" class="btn btn-primary">All</button>
+            <span><button type="button" id="searchbutton" class="btn btn-primary">Search</button></span>
+            <span><input id="inputsearch" placeholder="Enter country name..."></span>
+            <br><br>
+            <div id="content" class='content'>
+            </div>
+        </form>
+    </div>
+<script>
+    const countryTemplate=`
+    <div class="card" style="width: 18rem;">
+  <img class="card-img-top" src="{{flag}}" alt="Card image cap">
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item"><strong>Name: </strong>{{name}}</li>
+    <li class="list-group-item"><strong>Top level domain: </strong>{{topleveldomain}}</li>
+    <li class="list-group-item"><strong>Capital: </strong>{{capital}}</li>
+    <li class="list-group-item"><strong>Currencies: </strong><div>code:{{currenciescode}}</div><div>name:{{currenciesname}}</div><div>symbol:{{currenciessymbol}}</div></li>
+  </ul>
+  <br><br>
+    
+    `
+    function allCountries(){
+        $.ajax('https://restcountries.eu/rest/v2/all?fields=name;capital;currencies;flag;topLevelDomain').done(function (d) {
+        console.log(d);
+        for(i=0; i<d.length; i++ ){
+            let t = countryTemplate;
+            t = t.replace('{{flag}}', d[i].flag);
+            t = t.replace('{{name}}', d[i].name);
+            t = t.replace('{{topleveldomain}}', d[i].topLevelDomain);
+            t = t.replace('{{capital}}', d[i].capital);
+            t = t.replace('{{currenciescode}}', d[i].currencies[0].code);
+            t = t.replace('{{currenciesname}}', d[i].currencies[0].name);
+            t = t.replace('{{currenciessymbol}}', d[i].currencies[0].symbol);
+            $('#content').append(t); 
+        }
+
+     });
+    }
+
+      function byName(){
+          var search = $("#inputsearch").val();
+     $.ajax('https://restcountries.eu/rest/v2/name/' + search).done(function (d) {
+        console.log(d);
+        for(i=0; i<d.length; i++ ){
+            let t = countryTemplate;
+            t = t.replace('{{flag}}', d[i].flag);
+            t = t.replace('{{name}}', d[i].name);
+            t = t.replace('{{topleveldomain}}', d[i].topLevelDomain);
+            t = t.replace('{{capital}}', d[i].capital);
+            t = t.replace('{{currenciescode}}', d[i].currencies[0].code);
+            t = t.replace('{{currenciesname}}', d[i].currencies[0].name);
+            t = t.replace('{{currenciessymbol}}', d[i].currencies[0].symbol);
+            $('#content').append(t); 
+        }
+
+     });
+    }
+
+    
+   
+    
+
+$("#allbutton").click(function () {
+    $('#content').empty();
+    $("#inputsearch").val('');
+    allCountries();
+});
+
+$("#searchbutton").click(function () {
+    $('#content').empty();
+    byName();
+});
+
+</script>
+
+
+
+
+</body>
+
+</html>
